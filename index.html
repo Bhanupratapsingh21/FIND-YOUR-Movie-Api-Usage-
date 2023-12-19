@@ -444,7 +444,7 @@ searchbutton.addEventListener('click', (event) => {
     const yearfromuser = document.getElementById("year").value;
 
 
-    fetch(`http://www.omdbapi.com/?apikey=9a4455e3&t=${namefromuser}&y=${yearfromuser}&plot=full`)
+    fetch(`https://www.omdbapi.com/?apikey=9a4455e3&t=${namefromuser}&y=${yearfromuser}&plot=full`)
         .then((Response) => {
             return Response.json();
         })
