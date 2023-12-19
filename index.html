@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Your Movie</title>
+    <link rel="shortcut icon" href="https://i.pinimg.com/236x/b9/61/ae/b961ae62068288882d0f75e3947aaaaa.jpg">
+    <style>
+.form2,.form3,#display4,
+.form {
+  --input-focus: #2d8cf0;
+  --font-color: #323232;
+  --font-color-sub: #666;
+  --bg-color: beige;
+  --main-color: black;
+  padding: 20px;
+  background: lightblue;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 20px;
+  border-radius: 5px;
+  border: 2px solid var(--main-color);
+  box-shadow: 4px 4px var(--main-color);
+}
+
+.title {
+  color: var(--font-color);
+  font-weight: 900;
+  font-size: 20px;
+  margin-bottom: 25px;
+}
+
+.title span {
+  color: var(--font-color-sub);
+  font-weight: 600;
+  font-size: 17px;
+}
+
+.input {
+  width: 250px;
+  height: 40px;
+  border-radius: 5px;
+  border: 2px solid var(--main-color);
+  background-color: var(--bg-color);
+  box-shadow: 4px 4px var(--main-color);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--font-color);
+  padding: 5px 10px;
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--font-color-sub);
+  opacity: 0.8;
+}
+
+.input:focus {
+  border: 2px solid var(--input-focus);
+}
+
+.login-with {
+  display: flex;
+  gap: 20px;
+}
+
+.button-log {
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;
+  border: 2px solid var(--main-color);
+  background-color: var(--bg-color);
+  box-shadow: 4px 4px var(--main-color);
+  color: var(--font-color);
+  font-size: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  fill: var(--main-color);
+}
+
+.button-log:active, .button-confirm:active {
+  box-shadow: 0px 0px var(--main-color);
+  transform: translate(3px, 3px);
+}
+
+.button-confirm {
+  margin: 10px auto 0 auto;
+  width: 120px;
+  height: 40px;
+  border-radius: 5px;
+  border: 2px solid var(--main-color);
+  background-color: var(--bg-color);
+  box-shadow: 4px 4px var(--main-color);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--font-color);
+  cursor: pointer;
+}
+
+.loadingspinner {
+  --square: 26px;
+  --offset: 30px;
+  --duration: 2.4s;
+  --delay: 0.2s;
+  --timing-function: ease-in-out;
+  --in-duration: 0.4s;
+  --in-delay: 0.1s;
+  --in-timing-function: ease-out;
+  width: calc( 3 * var(--offset) + var(--square));
+  height: calc( 2 * var(--offset) + var(--square));
+  padding: 0px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+.loadingspinner div {
+  display: inline-block;
+  background: darkorange;
+    /*background: var(--text-color);*/
+    /*box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);*/
+  border: none;
+  border-radius: 2px;
+  width: var(--square);
+  height: var(--square);
+  position: absolute;
+  padding: 0px;
+  margin: 0px;
+  font-size: 6pt;
+  color: black;
+}
+
+.loadingspinner #square1 {
+  left: calc( 0 * var(--offset) );
+  top: calc( 0 * var(--offset) );
+  animation: square1 var(--duration) var(--delay) var(--timing-function) infinite,
+               squarefadein var(--in-duration) calc(1 * var(--in-delay)) var(--in-timing-function) both;
+}
+
+.loadingspinner #square2 {
+  left: calc( 0 * var(--offset) );
+  top: calc( 1 * var(--offset) );
+  animation: square2 var(--duration) var(--delay) var(--timing-function) infinite,
+              squarefadein var(--in-duration) calc(1 * var(--in-delay)) var(--in-timing-function) both;
+}
+
+.loadingspinner #square3 {
+  left: calc( 1 * var(--offset) );
+  top: calc( 1 * var(--offset) );
+  animation: square3 var(--duration) var(--delay) var(--timing-function) infinite,
+               squarefadein var(--in-duration) calc(2 * var(--in-delay)) var(--in-timing-function) both;
+}
+
+.loadingspinner #square4 {
+  left: calc( 2 * var(--offset) );
+  top: calc( 1 * var(--offset) );
+  animation: square4 var(--duration) var(--delay) var(--timing-function) infinite,
+               squarefadein var(--in-duration) calc(3 * var(--in-delay)) var(--in-timing-function) both;
+}
+
+.loadingspinner #square5 {
+  left: calc( 3 * var(--offset) );
+  top: calc( 1 * var(--offset) );
+  animation: square5 var(--duration) var(--delay) var(--timing-function) infinite,
+               squarefadein var(--in-duration) calc(4 * var(--in-delay)) var(--in-timing-function) both;
+}
+
+@keyframes square1 {
+  0% {
+    left: calc( 0 * var(--offset) );
+    top: calc( 0 * var(--offset) );
+  }
+
+  8.333% {
+    left: calc( 0 * var(--offset) );
+    top: calc( 1 * var(--offset) );
+  }
+
+  100% {
+    left: calc( 0 * var(--offset) );
+    top: calc( 1 * var(--offset) );
+  }
+}
+
+@keyframes square2 {
+  0% {
+    left: calc( 0 * var(--offset) );
+    top: calc( 1 * var(--offset) );
+  }
+
+  8.333% {
+    left: calc( 0 * var(--offset) );
+    top: calc( 2 * var(--offset) );
+  }
+
+  16.67% {
+    left: calc( 1 * var(--offset) );
+    top: calc( 2 * var(--offset) );
+  }
+
+  25.00% {
+    left: calc( 1 * var(--offset) );
+    top: calc( 1 * var(--offset) );
+  }
+
+  83.33% {
+    left: calc( 1 * var(--offset) );
+    top: calc( 1 * var(--offset) );
+  }
+
+  91.67% {
+    left: calc( 1 * var(--offset) );
+    top: calc( 0 * var(--offset) );
+  }
+
+  100% {
+    left: calc( 0 * var(--offset) );
+    top: calc( 0 * var(--offset) );
+  }
+}
+
+@keyframes square3 {
+  0%,100% {
+    left: calc( 1 * var(--offset) );
+    top: calc( 1 * var(--offset) );
+  }
+
+  16.67% {
+    left: calc( 1 * var(--offset) );
+    top: calc( 1 * var(--offset) );
+  }
+
+  25.00% {
+    left: calc( 1 * var(--offset) );
+    top: calc( 0 * var(--offset) );
+  }
+
+  33.33% {
+    left: calc( 2 * var(--offset) );
+    top: calc( 0 * var(--offset) );
+  }
+
+  41.67% {
+    left: calc( 2 * var(--offset) );
+    top: calc( 1 * var(--offset) );
+  }
+
+  66.67% {
+    left: calc( 2 * var(--offset) );
+    top: calc( 1 * var(--offset) );
+  }
+
+  75.00% {
+    left: calc( 2 * var(--offset) );
+    top: calc( 2 * var(--offset) );
+  }
+
+  83.33% {
+    left: calc( 1 * var(--offset) );
+    top: calc( 2 * var(--offset) );
+  }
+
+  91.67% {
+    left: calc( 1 * var(--offset) );
+    top: calc( 1 * var(--offset) );
+  }
+}
+
+@keyframes square4 {
+  0% {
+    left: calc( 2 * var(--offset) );
+    top: calc( 1 * var(--offset) );
+  }
+
+  33.33% {
+    left: calc( 2 * var(--offset) );
+    top: calc( 1 * var(--offset) );
+  }
+
+  41.67% {
+    left: calc( 2 * var(--offset) );
+    top: calc( 2 * var(--offset) );
+  }
+
+  50.00% {
+    left: calc( 3 * var(--offset) );
+    top: calc( 2 * var(--offset) );
+  }
+
+  58.33% {
+    left: calc( 3 * var(--offset) );
+    top: calc( 1 * var(--offset) );
+  }
+
+  100% {
+    left: calc( 3 * var(--offset) );
+    top: calc( 1 * var(--offset) );
+  }
+}
+
+@keyframes square5 {
+  0% {
+    left: calc( 3 * var(--offset) );
+    top: calc( 1 * var(--offset) );
+  }
+
+  50.00% {
+    left: calc( 3 * var(--offset) );
+    top: calc( 1 * var(--offset) );
+  }
+
+  58.33% {
+    left: calc( 3 * var(--offset) );
+    top: calc( 0 * var(--offset) );
+  }
+
+  66.67% {
+    left: calc( 2 * var(--offset) );
+    top: calc( 0 * var(--offset) );
+  }
+
+  75.00% {
+    left: calc( 2 * var(--offset) );
+    top: calc( 1 * var(--offset) );
+  }
+
+  100% {
+    left: calc( 2 * var(--offset) );
+    top: calc( 1 * var(--offset) );
+  }
+}
+
+@keyframes squarefadein {
+  0% {
+    transform: scale(0.75);
+    opacity: 0.0;
+  }
+
+  100% {
+    transform: scale(1.0);
+    opacity: 1.0;
+  }
+}
+
+#box{
+    display: flex;
+    justify-content: center;
+}
+body{
+    background-color: rgb(0, 0, 0);
+}
+#titelename{
+    font-size: 25px;
+    margin-bottom: -10px;
+}
+#realsedate{
+    font-size: 25px;
+    margin-top: -10px;
+    margin-bottom: -20px;
+}
+#name{
+    margin-top: -35px;
+    margin-bottom: -5px;
+}
+.form2{
+    display: flex;
+}
+.form3{
+    display: none;
+}
+#creadit{
+    margin-top: -10px;
+    margin-bottom: -10px;
+}
+#display4{
+    display: none;
+    height: 250px;
+    width: 260px;
+}
+</style>
+</head>
+<body>
+<div id="box">
+    <form class="form">
+        <div id="display3" class="form3">
+            <div class="title">Here is ,<br>
+                <span>Results Of Your Search</span>
+            </div>
+            <h1 id="name">PK</h1>
+            <img class="input" style="height: fit-content;" id="img" src="" alt="IMGFROMRESPONSE">        
+            <h1 id="realsedate"></h1>
+            <h1 id="starcast" class="input"></h1>
+            <h1 id="genre" class="input"></h1>
+            <button id="back" class="button-confirm">Back</button>
+        </div>
+        <div  id="display4">
+            <div class="loadingspinner">
+                <div id="square1"></div>
+                <div id="square2"></div>
+                <div id="square3"></div>
+                <div id="square4"></div>
+                <div id="square5"></div>
+            </div>
+        </div>
+        <div id="display2" class="form2">
+            <h1 id="titelename">Find Your Fav Movie</h1>
+            <div class="title">Welcome,<br>
+                <span>ENTER YOUR MOVIE NAME</span>
+            </div>
+            <input class="input" id="moviename" name="name" placeholder="Movie-Name" type="name">
+            <input class="input" id="year" name="age" placeholder="Movie-Year" type="number">        
+            <button id="deldata" class="button-confirm">SEARCH</button>
+        </div>
+    </form>
+</div>
+</body>
+<script>
+const searchbutton = document.getElementById("deldata");
+const backbutton = document.getElementById("back");
+let display2 = document.getElementById("display2");
+let display3 = document.getElementById("display3");
+let display4 = document.getElementById("display4");
+const movienamefromapi = document.getElementById("name");
+const moviegenrefromapi = document.getElementById("genre");
+const moviecastfromapi = document.getElementById("starcast");
+const posterimg = document.getElementById("img");
+const realsedate = document.getElementById("realsedate");
+
+searchbutton.addEventListener('click', (event) => {
+    event.preventDefault();
+
+    const namefromuser = document.getElementById("moviename").value;
+    const yearfromuser = document.getElementById("year").value;
+
+
+    fetch(`http://www.omdbapi.com/?apikey=9a4455e3&t=${namefromuser}&y=${yearfromuser}&plot=full`)
+        .then((Response) => {
+            return Response.json();
+        })
+        .then((values) => {
+            console.log(values);
+            if(values.Response == "False"){
+                movienamefromapi.innerText = values.Error
+                posterimg.src = "https://i.pinimg.com/236x/a4/3e/e6/a43ee6d3e310564af22b71bdfb1a52e7.jpg"
+                moviecastfromapi.innerText = `Check Your Spalling Or Movie Year`;
+            }else{
+            movienamefromapi.innerText = ` ${values.Title}`;
+            moviegenrefromapi.innerText = `Genre : ${values.Genre}`;
+            moviecastfromapi.innerText = `STAR-CASTE : ${values.Actors}`;
+            posterimg.src = values.Poster;
+            realsedate.innerText = `Released : ${values.Released}`
+            }
+        }).catch((Response)=>{
+                movienamefromapi.innerText = `ERROR IN MAKEING API REQ`
+                posterimg.src = "https://i.pinimg.com/236x/a4/3e/e6/a43ee6d3e310564af22b71bdfb1a52e7.jpg"
+                realsedate.innerText = `REPORT TO DEVELOPER ABOUT THIS`;
+        })
+
+    display2.style.display = "none";
+    display4.style.display = "flex";
+
+   
+    setTimeout(() => {
+        display4.style.display = "none";
+        display3.style.display = "flex";
+        display2.style.display = "none";
+    }, 2000);
+});
+
+backbutton.addEventListener('click', (event) => {
+
+    display2.style.display = "flex";
+    display3.style.display = "none";
+});
+
+</script>
+</html>
