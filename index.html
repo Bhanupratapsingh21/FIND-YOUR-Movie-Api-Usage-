@@ -37,6 +37,47 @@
   font-weight: 600;
   font-size: 17px;
 }
+#suggestions{
+  width: 250px;
+  height: max-content;
+  border-radius: 5px;
+  border-top: transparent;
+  border: 2px solid var(--main-color);
+  background-color: var(--bg-color);
+  box-shadow: 4px 4px var(--main-color);
+  font-size: 15px;
+  font-weight: 600;
+  text-align: left;
+  color: var(--font-color);
+  padding: -0px 10px;
+  margin-top: -22px;
+  outline: none;
+}
+#item:hover{
+  scale: 1;
+}
+#item{
+  color: rgb(255, 6, 6);
+  width: 250px;
+  height: max-content;
+  border-radius: 5px;
+  border-top: transparent;
+  border: 2px solid var(--main-color);
+  background-color: var(--bg-color);
+  box-shadow: 4px 4px var(--main-color);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--font-color);
+  outline: none;
+  margin-left: -8px;
+  cursor: pointer;
+}
+
+#suggestionsList{
+  margin-top: -0px;
+  margin-left: -40px;
+  list-style-type:none;
+}
 
 .input {
   width: 250px;
@@ -419,7 +460,10 @@ body{
                 <span>ENTER YOUR MOVIE NAME</span>
             </div>
             <input class="input" id="moviename" name="name" placeholder="Movie-Name" type="name">
-            <input class="input" id="year" name="age" placeholder="Movie-Year" type="number">        
+            <div id="suggestions" class="form3">
+              <ul id="suggestionsList"></ul>
+            </div>
+            <input class="input" id="year" name="age" placeholder="M-Year(Leave blank also works)" type="number">        
             <button id="deldata" class="button-confirm">SEARCH</button>
         </div>
     </form>
@@ -439,44 +483,94 @@ const realsedate = document.getElementById("realsedate");
 
 searchbutton.addEventListener('click', (event) => {
     event.preventDefault();
-
     const namefromuser = document.getElementById("moviename").value;
     const yearfromuser = document.getElementById("year").value;
-
-
-    fetch(`https://www.omdbapi.com/?apikey=9a4455e3&t=${namefromuser}&y=${yearfromuser}&plot=full`)
-        .then((Response) => {
-            return Response.json();
-        })
-        .then((values) => {
-            console.log(values);
-            if(values.Response == "False"){
-                movienamefromapi.innerText = values.Error
-                posterimg.src = "https://i.pinimg.com/236x/a4/3e/e6/a43ee6d3e310564af22b71bdfb1a52e7.jpg"
-                moviecastfromapi.innerText = `Check Your Spalling Or Movie Year`;
-            }else{
-            movienamefromapi.innerText = ` ${values.Title}`;
-            moviegenrefromapi.innerText = `Genre : ${values.Genre}`;
-            moviecastfromapi.innerText = `STAR-CASTE : ${values.Actors}`;
-            posterimg.src = values.Poster;
-            realsedate.innerText = `Released : ${values.Released}`
-            }
-        }).catch((Response)=>{
-                movienamefromapi.innerText = `ERROR IN MAKEING API REQ`
-                posterimg.src = "https://i.pinimg.com/236x/a4/3e/e6/a43ee6d3e310564af22b71bdfb1a52e7.jpg"
-                realsedate.innerText = `REPORT TO DEVELOPER ABOUT THIS`;
-        })
-
     display2.style.display = "none";
     display4.style.display = "flex";
+    apicalling(namefromuser,yearfromuser)
+});
 
-   
-    setTimeout(() => {
+async function apicalling(nameFromUser, yearFromUser) {
+    try {
+        const response = await fetch(`https://www.omdbapi.com/?apikey=9a4455e3&t=${nameFromUser}&y=${yearFromUser}&plot=full`);
+        const values = await response.json();
+
+        if (values.Response === "False") {
+            
+            movienamefromapi.innerText = values.Error;
+            posterimg.src = "https://i.pinimg.com/236x/a4/3e/e6/a43ee6d3e310564af22b71bdfb1a52e7.jpg";
+            moviecastfromapi.innerText = `Check Your Spelling Or Movie Year`;
+        } else {
+            
+            movienamefromapi.innerText = ` ${values.Title}`;
+            moviegenrefromapi.innerText = `Genre: ${values.Genre}`;
+            moviecastfromapi.innerText = `STAR-CASTE: ${values.Actors}`;
+            posterimg.src = values.Poster;
+            realsedate.innerText = `Released: ${values.Released}`;
+        }
+    } catch (error) {
+        
+        movienamefromapi.innerText = `ERROR IN MAKING API REQ`;
+        posterimg.src = "https://i.pinimg.com/236x/a4/3e/e6/a43ee6d3e310564af22b71bdfb1a52e7.jpg";
+        realsedate.innerText = `REPORT TO DEVELOPER ABOUT THIS`;
+    } finally {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
         display4.style.display = "none";
         display3.style.display = "flex";
         display2.style.display = "none";
-    }, 2000);
-});
+    }
+}
+
+
+const suggestionsDiv = document.getElementById("suggestions");
+const suggestionsList = document.getElementById("suggestionsList");
+
+// Update the searchres function to fetch and display suggestions
+async function searchres(value) {
+    try {
+      let response2 = await fetch(`https://www.omdbapi.com/?apikey=9a4455e3&s=${value}`);
+      let jsonres = await response2.json();
+
+        if (jsonres.Response === "True") {
+          const movies = jsonres.Search;
+          suggestionsList.innerHTML = "";
+
+          movies.forEach((movie) => {
+            const li = document.createElement("li");
+            li.textContent = movie.Title;
+            li.id = "item"
+            li.addEventListener("click", () => {
+              let listitem = document.getElementById("moviename").value = movie.Title;
+              suggestionsDiv.style.display = "none";
+              display2.style.display = "none";
+              display4.style.display = "flex";
+              apicalling(listitem);
+            });
+            suggestionsList.appendChild(li);
+          });
+
+          suggestionsDiv.style.display = "flex";
+        } else {
+          suggestionsDiv.style.display = "none";
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    // Add an event listener for the input to trigger suggestions
+    document.getElementById("moviename").addEventListener("input", (event) => {
+      const inputValue = event.target.value.trim();
+      let timeout = setTimeout(() => {
+        if (inputValue.length >= 1) {
+        searchres(inputValue);
+      } else {
+        suggestionsDiv.style.display = "none";
+      }       
+      }, 500);
+      
+    });
 
 backbutton.addEventListener('click', (event) => {
 
